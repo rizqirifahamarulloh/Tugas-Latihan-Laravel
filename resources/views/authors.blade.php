@@ -10,12 +10,8 @@
     <h1>Authors</h1>
     <p>Ini adalah halaman untuk menampilkan daftar penulis.</p>
 
-    @foreach ($data_author as $author)
-    <ul>
-        <li>ID: {{ $author['id'] }}</li>
-        <li>Nama: {{ $author['name'] }}</li>
-        <li>Bio: {{ $author['bio'] }}</li>
-    </ul>
-@endforeach
+    @foreach($authors as $author)
+        <li>{{ $author->name }} - Bio: {{ $author->bio }}</li>
+    @endforeach
 </body>
 </html>

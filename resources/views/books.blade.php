@@ -10,13 +10,8 @@
     <h1>Selamat Datang di Halaman Buku</h1>
     <p>Ini adalah halaman untuk menampilkan daftar buku.</p>
 
-    @foreach ($books as $item)
-        <ul>
-            <li>{{ $item['title'] }}</li>
-            <li>{{ $item['description']}}</li>
-            <li>{{ $item['price']}}</li>
-            <li>{{ $item['stock']}}</li>
-        </ul>
+    @foreach($books as $book)
+        <li>{{ $book->title }} - Penulis: {{ $book->author->name }}</li>
     @endforeach
 </body>
 </html>
