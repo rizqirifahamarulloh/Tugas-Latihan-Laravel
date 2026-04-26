@@ -63,4 +63,90 @@ class BookController extends Controller
             'data' => $book->load('author'),
         ], 201);
     }
+
+    public function show(string $id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Get detail resource',
+            'data' => $book->load('author')
+        ], 200);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null
+            ], 404);
+        }
+
+        // Aturan validasi request
+        $validator = Validator::make($request->all(), [
+            'author_id' => 'sometimes|required|exists:authors,id',
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'price' => 'sometimes|required|integer|min:0',
+            'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $validated = $validator->validated();
+
+        // Handle image upload jika ada
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('books', 'public');
+            $validated['image'] = $imagePath;
+        }
+
+        $book->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource updated successfully',
+            'data' => $book->load('author'),
+        ], 200);
+    }
+
+    public function destroy(string $id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null
+            ], 404);
+        }
+
+        $book->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource deleted successfully',
+            'data' => null
+        ], 200);
+    }
 }

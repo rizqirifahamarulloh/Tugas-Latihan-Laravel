@@ -42,4 +42,78 @@ class AuthorController extends Controller
             'data' => $author,
         ], 201);
     }
+
+    public function show(string $id)
+    {
+        $author = Author::find($id);
+
+        if (!$author) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null,
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Get detail resource',
+            'data' => $author,
+        ], 200);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $author = Author::find($id);
+
+        if (!$author) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null,
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255',
+            'bio' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $author->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource updated successfully',
+            'data' => $author,
+        ], 200);
+    }
+
+    public function destroy(string $id)
+    {
+        $author = Author::find($id);
+
+        if (!$author) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Resource not found',
+                'data' => null,
+            ], 404);
+        }
+
+        $author->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resource deleted successfully',
+            'data' => null,
+        ], 200);
+    }
 }
