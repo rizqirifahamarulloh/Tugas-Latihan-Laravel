@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +25,12 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Admin only - Create, Update, Delete for books, authors, genres
+    // Customer routes - Create, Update, Show transactions
+    Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'show']);
+
+    // Admin only - Create, Update, Delete for books, authors, genres and admin transaction routes
     Route::middleware('role:admin')->group(function () {
+        Route::apiResource('transactions', TransactionController::class)->only(['index', 'destroy']);
         Route::apiResource('books', BookController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('authors', AuthorController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('genres', GenreController::class)->only(['store', 'update', 'destroy']);
